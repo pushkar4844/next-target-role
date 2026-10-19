@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<Base title="Next Role" description="Two career moves, in order: Google Cloud Architect, then NVIDIA Solutions Architect.">
+  <section class="hero">
+    <p class="eyebrow">AWS ProServe Cloud Architect · 7+ yrs · Dallas, TX</p>
+    <h1>Two moves, in order.</h1>
+    <p class="sub lead">Each plan has one target role, the gaps to close, a week-by-week checklist, resume edits and interview prep. Open one and do the first task.</p>
+  </section>
+
+  <div class="choices">
+    <a class="choice g" href={`${base}/google/`} data-plan="google">
+      <span class="step">Step 1 · now → Jan 2027</span>
+      <span class="co">Google Cloud</span>
+      <span class="role">Cloud Architect<br /><small>Customer Engineer II, Platform</small></span>
+      <span class="facts"><span>~10 weeks prep</span><span>Apply Jan 4–10</span><span>No coding round</span></span>
+      <span class="status">Not started</span>
+      <span class="go">Open Google plan <b aria-hidden="true">→</b></span>
+    </a>
+    <a class="choice n" href={`${base}/nvidia/`} data-plan="nvidia">
+      <span class="step">Step 2 · labs Oct → Jan</span>
+      <span class="co">NVIDIA</span>
+      <span class="role">Solutions Architect<br /><small>NVIDIA Cloud Partners</small></span>
+      <span class="facts"><span>4 GPU labs</span><span>Apply Jan 11–24</span><span>6–8 month loop</span></span>
+      <span class="status">Not started</span>
+      <span class="go">Open NVIDIA plan <b aria-hidden="true">→</b></span>
+    </a>
+  </div>
+
+  <h2>Why this order</h2>
+  <div class="tbl"><table>
+    <tr><th></th><th>Google CE II</th><th>NVIDIA SA</th></tr>
+    <tr><td>Fit today</td><td>You already meet the requirements</td><td>Need hands-on GPU experience first</td></tr>
+    <tr><td>Prep time</td><td>~10 hrs/week for 10 weeks</td><td>~12 hrs/week for 12 weeks</td></tr>
+    <tr><td>Process</td><td>Hiring opens in January</td><td>Long: plan for 6–8 months of interviews</td></tr>
+    <tr><td>If you only have time for one</td><td><b>Do this one</b></td><td>Start the labs once the Google prep is on track</td></tr>
+  </table></div>
+
+  <h2>Timeline</h2>
+  <ol class="tl">
+    <li><b>Oct 19–25</b> Resume edits, mentor messages, book the PCA exam, create the GPU lab repo</li>
+    <li><b>Nov</b> Learn Google Cloud · GPU Labs 1–2 · NCA-AIIO</li>
+    <li><b>Dec</b> Agent demo · PCA exam Dec 19 · Lab 3 multi-node</li>
+    <li><b>Jan 2027</b> Apply to Google (Jan 4–10), then NVIDIA plus AI infra companies (Jan 11–24)</li>
+    <li><b>Feb → mid-2027</b> Interviews and offers</li>
+  </ol>
+</Base>
+
+<style>
+  .hero{padding:28px 0 8px}
+  .hero h1{font-size:44px;margin:8px 0 10px}
+  .lead{font-size:17px;max-width:620px}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0 8px}
+  .choice{--c:var(--google);--cs:var(--google-soft);position:relative;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--text);
+    background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 24px 22px;box-shadow:var(--shadow);overflow:hidden;
+    transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+  .choice.n{--c:var(--nvidia);--cs:var(--nvidia-soft)}
+  .choice::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:var(--c)}
+  .choice:hover{transform:translateY(-3px);border-color:var(--c);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+  .choice:focus-visible{outline:3px solid var(--c);outline-offset:3px}
+  .step{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--c)}
+  .co{font-size:15px;font-weight:600;color:var(--muted)}
+  .role{font-size:28px;font-weight:750;line-height:1.15;letter-spacing:-.02em}
+  .role small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+  .facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .facts span{font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--cs);color:var(--c)}
+  .status{font-size:13px;color:var(--muted)}
+  .go{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-weight:700;background:var(--c);color:var(--bg);padding:14px 18px;border-radius:12px;font-size:16px}
+  .go b{transition:transform .15s}
+  .choice:hover .go b{transform:translateX(4px)}
+  .tl{list-style:none;padding:0;margin:0;border-left:2px solid var(--line)}
+  .tl li{position:relative;padding:4px 0 14px 20px;margin:0}
+  .tl li::before{content:"";position:absolute;left:-7px;top:10px;width:12px;height:12px;border-radius:50%;background:var(--card);border:2px solid var(--muted)}
+  .tl b{display:block}
+  @media (max-width:720px){.choices{grid-template-columns:1fr}.hero h1{font-size:34px}.role{font-size:24px}}
+</style>
+
+<script is:inline>
+document.querySelectorAll('.choice').forEach(function (a) {
+  try {
+    var v = JSON.parse(localStorage.getItem('plan-' + a.dataset.plan + '-summary') || 'null');
+    if (v && v.total) a.querySelector('.status').textContent = v.done + ' of ' + v.total + ' tasks done';
+  } catch (e) {}
+});
+</script>

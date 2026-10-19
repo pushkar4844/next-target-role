@@ -1,0 +1,43 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  brand?: 'home' | 'google' | 'nvidia';
+}
+const { title, description, brand = 'home' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const links = [
+  { href: `${base}/`, label: 'Home', key: 'home' },
+  { href: `${base}/google/`, label: 'Google', key: 'google', n: 1 },
+  { href: `${base}/nvidia/`, label: 'NVIDIA', key: 'nvidia', n: 2 },
+];
+---
+<!doctype html>
+<html lang="en" data-brand={brand}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <a class="brand" href={`${base}/`}><img src={`${base}/favicon.svg`} alt="" width="26" height="26" />Next Role</a>
+        <nav class="nav" aria-label="Pages">
+          {links.map((l) => (
+            <a href={l.href} aria-current={l.key === brand ? 'page' : undefined}>
+              {l.n && <span class="n">{l.n}</span>}{l.label}
+            </a>
+          ))}
+        </nav>
+      </header>
+      <slot />
+      <footer class="foot">Built Oct 2026 from live job postings, mentor calls and the resume. Postings close and reopen often: if a link is dead, search the same title.</footer>
+    </div>
+  </body>
+</html>

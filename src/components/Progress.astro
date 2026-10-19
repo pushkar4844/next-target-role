@@ -1,0 +1,42 @@
+---
+interface Props {
+  plan: string;
+  sections: { id: string; label: string }[];
+}
+const { plan, sections } = Astro.props;
+---
+<div class="prog" data-plan={plan}>
+  <div class="line">Progress <b id="pt">0/0</b> · Next: <b id="nx">—</b></div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav class="chips" aria-label="Sections">
+    {sections.map((s) => <a href={`#${s.id}`}>{s.label}</a>)}
+  </nav>
+</div>
+
+<script is:inline>
+document.addEventListener("DOMContentLoaded", function () {
+  var K = 'plan-' + document.querySelector('[data-plan]').dataset.plan, s = {};
+  try { s = JSON.parse(localStorage.getItem(K) || '{}'); } catch (e) {}
+  var b = [].slice.call(document.querySelectorAll('.task input'));
+  function r() {
+    var d = 0, nx = null;
+    b.forEach(function (x) {
+      x.checked = !!s[x.id];
+      x.closest('.task').classList.toggle('done', x.checked);
+      if (x.checked) d++; else if (!nx) nx = x;
+    });
+    document.getElementById('pt').textContent = d + '/' + b.length;
+    document.getElementById('pb').style.width = (b.length ? d / b.length * 100 : 0) + '%';
+    document.getElementById('nx').textContent = nx ? nx.nextElementSibling.firstChild.textContent.trim() : 'All done 🎉';
+    try { localStorage.setItem(K + '-summary', JSON.stringify({ done: d, total: b.length })); } catch (e) {}
+  }
+  b.forEach(function (x) {
+    x.addEventListener('change', function () {
+      s[x.id] = x.checked;
+      try { localStorage.setItem(K, JSON.stringify(s)); } catch (e) {}
+      r();
+    });
+  });
+  r();
+});
+</script>
