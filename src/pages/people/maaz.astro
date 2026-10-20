@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'Key points' }, { id: 'do', label: 'Do this' },
+  { id: 'detail', label: 'In detail' }, { id: 'fixes', label: 'Corrections' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Maaz Khalid" description="Maaz's layer-by-layer guide to building GPU infrastructure." brand="nvidia" current="people">
+<Progress plan="person-maaz" sections={sections} />
+<PersonHeader slug="maaz" />
+
+<h2 id="key"><span class="num">1</span>Key points</h2>
+<div class="card">
+<div class="q"><b>1. Managed-service DevOps is now commodity; AI infra is "back to basics".</b><span>Anyone can prompt an AI to write Terraform for 10 customers. In AI infra there's no managed layer: compute, network and storage fundamentals are the job.</span></div>
+<div class="q"><b>2. Learn it in this order: bare metal → network → storage → Kubernetes → GPU drivers → slicing.</b><span>Each layer is one study block. Start from "boot a server", not "click a GPU in the console".</span></div>
+<div class="q"><b>3. Infra is sized in megawatts and GPU count, not dollars.</b><span>People talk about "a 3 MW / 15 MW data center" or "this many GPUs".</span></div>
+<div class="q"><b>4. Training and inference need different infrastructure.</b><span>Training spans nodes: needs a non-blocking lossless back-end network and a parallel file system for checkpoints. Inference usually fits in one node; normal storage is fine.</span></div>
+<div class="q"><b>5. Get hands-on hardware by the hour.</b><span>NVIDIA's own platform rents GPUs per hour (student discounts exist); a DGX Spark is a desk-sized option.</span></div>
+</div>
+
+<h2 id="do"><span class="num">2</span>Do this</h2>
+<div class="week"><h3>Maaz's actions, in his order <span>tick as you go</span></h3>
+<div class="task"><input type="checkbox" id="mz1"><label for="mz1">Bare metal: in VMs, PXE-boot 3 machines with Canonical MAAS (DHCP, DNS, TFTP). Read what iDRAC, iLO and BMC do.<span class="done-when">Done when MAAS installs Ubuntu on a machine with no manual steps.</span></label></div>
+<div class="task"><input type="checkbox" id="mz2"><label for="mz2">Network: draw one GPU node's NICs (PXE, management/front-end, storage, 8× back-end) and the switch fabric for 32 nodes. Do the subscription-ratio math.<span class="done-when">Done when you can say how many 800G uplinks keep it 1:1 non-blocking.</span></label></div>
+<div class="task"><input type="checkbox" id="mz3"><label for="mz3">Network: read about VLAN/VXLAN segregation for multi-tenant bare metal, and ECN + PFC for lossless RoCE. Compare Cisco, Arista and Dell SONiC fabrics.<span class="done-when">Done when you can explain how 2 tenants on 1 fabric are kept apart.</span></label></div>
+<div class="task"><input type="checkbox" id="mz4"><label for="mz4">Storage: write 1 page on why training checkpoints need a parallel file system (Lustre, DDN, VAST) and why inference doesn't.<span class="done-when">Done when you can say it in 60 seconds (he expects this exact interview question).</span></label></div>
+<div class="task"><input type="checkbox" id="mz5"><label for="mz5">Kubernetes: install a cluster yourself with kubeadm (or k3s) and understand control plane, etcd and CNI. He learned "the hard way" from Mumshad's KodeKloud course.<span class="done-when">Done when you've rebuilt it twice without notes.</span></label></div>
+<div class="task"><input type="checkbox" id="mz6"><label for="mz6">GPU layer: install the GPU Operator (Helm), list allocatable GPUs on a node, then add RDMA with the Network Operator / Multus / SR-IOV so a pod gets a back-end NIC.<span class="done-when">Done when a pod shows a GPU and an RDMA interface.</span></label></div>
+<div class="task"><input type="checkbox" id="mz7"><label for="mz7">GPU sharing: compare MIG profiles, vGPU and PCI passthrough to VMs (device and product IDs, driver in the image).<span class="done-when">Done when you can pick one for "small 27B models for many tenants".</span></label></div>
+<div class="task"><input type="checkbox" id="mz8"><label for="mz8">Design his real-world case: a self-service portal where a user asks for 2 GPUs (quotas, slicing, network isolation, cleanup).<span class="done-when">Done when it's a 1-page design in your repo.</span></label></div>
+<div class="task"><input type="checkbox" id="mz9"><label for="mz9">Send him your roadmap in 3–4 weeks as promised; he'll validate the direction.<span class="done-when">Done when sent.</span></label></div>
+</div>
+
+<h2 id="detail"><span class="num">3</span>In detail</h2>
+<div class="card">
+<b>Why "back to basics"</b>
+<div class="q"><b>Managed services hide the hard part</b><span>Creating a cluster on AWS or Azure hides the control plane, storage and network plugins they engineered. A new hire at his company generated all Terraform from Claude and deployed it for 10 customers without thinking. That work is now "prompt → implement". Real value is understanding what's behind it.</span></div>
+<div class="q"><b>Fundamentals</b><span>Networking, storage, compute. "If you've ever installed an OS from a CD, you can grow in this industry." Then the 4th layer: the application.</span></div>
+</div>
+<div class="card">
+<b>Layer 1: bare metal orchestration</b>
+<div class="q"><b>Booting at scale</b><span>Servers boot via PXE (remote boot), using DHCP, DNS and TFTP services. With 100, 150 or 1,000 nodes you can't mount ISOs one by one; you need a tool that tracks state. His best tool so far: <b>MAAS</b> (Canonical, open source). It supports tenancy and onboarding nodes onto different networks. Any "GPU factory" conversation starts here.</span></div>
+<div class="q"><b>DGX vs HGX</b><span>DGX: NVIDIA's full stack (rack, OS, Kubernetes or Slurm layer) managed by NVIDIA. HGX: NVIDIA's GPU board inside Dell, HPE or Asus servers that the OEM tests and benchmarks; you build the solution around it. Smaller orgs buy 3–4 HGX boxes for local AI or agent work. He suggests learning on the HGX side: that knowledge is what makes NVIDIA want you.</span></div>
+<div class="q"><b>His recent build</b><span>159 GPU nodes × 8 H200 (HGX) for an Abu Dhabi client. They chose HGX over DGX for cost and to resell capacity: 2 nodes to one customer, 4 to another. Bare-metal management (MAAS, PXE, network definitions) was the key skill.</span></div>
+</div>
+<div class="card">
+<b>Layer 2: networking</b>
+<div class="q"><b>Networks per node</b><span><b>PXE:</b> one-time boot, 1 Gbps is enough; can be merged with management. <b>Front-end / management:</b> SSH, exposed services, Kubernetes load balancer IPs. <b>Storage</b> connectivity. <b>Back-end:</b> GPU-to-GPU; every GPU brings its own NIC (400/800 Gbps) up into the fabric.</span></div>
+<div class="q"><b>Sizing</b><span>When proposing a solution you state the NICs: e.g. per node 2× 25/100G front-end + 8× 400G back-end. That decides the whole fabric for, say, 32 nodes.</span></div>
+<div class="q"><b>Subscription ratio (his math)</b><span>2 nodes × 8 × 800G = 16 ports. A 16-port switch is full; a 3rd node needs another switch layer, and uplinks must carry 16 × 800G if everyone sends at once. Fabric designers check: if all GPUs send together, what's the largest cluster I can build?</span></div>
+<div class="q"><b>Lossless</b><span>Training sends each layer's output to the next GPU; retransmits like TCP stretch training time. InfiniBand transfers without errors; on Ethernet, <b>ECN</b> (congestion signalling) and <b>PFC</b> (priority flow control) make the back-end lossless.</span></div>
+<div class="q"><b>Multi-tenancy</b><span>On bare metal there's no "create a VNet" button. Learn VLAN/VXLAN and network segregation, and the fabric vendors: Cisco, Arista, Dell SONiC.</span></div>
+</div>
+<div class="card">
+<b>Layer 3: storage, training vs inference</b>
+<div class="q"><b>GPU vs CPU</b><span>Both have RAM and cycles, but GPU memory is HBM, very high bandwidth, so data moves at GPU compute speed instead of the CPU waiting on disk → RAM.</span></div>
+<div class="q"><b>Training</b><span>All layers and data must sit in GPU memory at runtime. One node maxes at 8 GPUs, so big models span nodes, which then must talk constantly over the fabric. Checkpoints written to storage without parallel I/O leave GPUs waiting. Hence <b>parallel file systems (Lustre)</b> and vendors like DDN and VAST.</span></div>
+<div class="q"><b>Inference</b><span>The model is already trained; it only generates responses, usually not across a big cluster, so normal storage is fine. Most companies outside the few model-training labs run inference, so that's where most infra jobs are.</span></div>
+</div>
+<div class="card">
+<b>Layers 4–5: Kubernetes, drivers, GPU sharing</b>
+<div class="q"><b>Kubernetes install is your job</b><span>No managed service: kubeadm, k3s, etc. Understand masters, the etcd cluster, everything Azure hides. He learned from Mumshad Mannambeth's KodeKloud course.</span></div>
+<div class="q"><b>GPU drivers</b><span>"Just Helm charts" (GPU Operator), installed per configuration. Then: allocatable resources: where they're listed, how many are left, how they're assigned.</span></div>
+<div class="q"><b>RDMA into pods</b><span>A normal pod gets one NIC from the pod CIDR. A GPU pod also needs back-end NICs, installed through a CNI (RDMA), so you must plan how to expose and use them in Kubernetes.</span></div>
+<div class="q"><b>Three ways to share GPUs</b><span><b>GPU passthrough</b> to VMs: pass PCI devices (IDs, product ID) and include the driver in the image. <b>vGPU</b>: virtual GPUs to separate VMs. <b>MIG</b>: physically splits one GPU by memory size and SM (compute) cores into profiles, so one GPU serves several workloads. NVIDIA's tooling here is ahead of others (AMD uses ROCm).</span></div>
+<div class="q"><b>Model sizing</b><span>Parameters × bytes per parameter = memory. Small models (~27B) fit on one GPU or a MIG slice; profile accordingly.</span></div>
+</div>
+<div class="card">
+<b>Learning and hardware</b>
+<div class="q"><b>Where to read</b><span>NVIDIA blogs. Consolidated material on storage and fabrics barely exists; you learn it on the job. For interviews, be able to explain parallel file systems and when they're needed.</span></div>
+<div class="q"><b>Hardware</b><span>NVIDIA's platform rents full servers per hour; with a college ID, students get discounts or free time (a 2.5-year-experience colleague got a B300 for a month). Buying: a DGX Spark is enough to play with.</span></div>
+<div class="q"><b>Market note</b><span>In the Middle East, Azure has ~70–80% share (e.g. First Abu Dhabi Bank) because of data sovereignty regions; AWS presence is small.</span></div>
+</div>
+
+<h2 id="fixes"><span class="num">4</span>Corrections</h2>
+<div class="fix"><b>FP8 is 1 byte per parameter, not 4.</b> FP32 = 4, FP16/BF16 = 2, FP8 = 1, INT4 = 0.5. So a 27B model in FP8 is ~27 GB of weights (plus KV cache), which matches his "~30 GB" example.</div>
+<div class="fix"><b>H200 memory bandwidth is 4.8 TB/s</b> (nvidia.com). The 1.8 TB/s figure he quoted is NVLink bandwidth per GPU on Blackwell, a different link.</div>
+<div class="fix"><b>The hourly platform</b> he linked in chat isn't in the transcript. NVIDIA's per-hour GPU service is <a href="https://brev.nvidia.com/" target="_blank" rel="noopener">Brev</a>; confirm with him.</div>
+
+<h2 id="links"><span class="num">5</span>Links</h2>
+<div class="card"><ul class="links">
+<li><a href="https://maas.io/" target="_blank" rel="noopener">Canonical MAAS</a><span>His bare-metal provisioning tool.</span></li>
+<li><a href="https://learn.kodekloud.com/" target="_blank" rel="noopener">KodeKloud (Mumshad Mannambeth)</a> · <a href="https://github.com/kelseyhightower/kubernetes-the-hard-way" target="_blank" rel="noopener">Kubernetes the Hard Way</a><span>Learn Kubernetes without a managed service.</span></li>
+<li><a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/" target="_blank" rel="noopener">kubeadm</a> · <a href="https://k3s.io/" target="_blank" rel="noopener">k3s</a><span>The two installers he named.</span></li>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html" target="_blank" rel="noopener">GPU Operator</a> · <a href="https://docs.nvidia.com/networking/display/kubernetes2410/index.html" target="_blank" rel="noopener">Network Operator</a><span>Drivers and RDMA as Helm charts.</span></li>
+<li><a href="https://github.com/k8snetworkplumbingwg/multus-cni" target="_blank" rel="noopener">Multus CNI</a> · <a href="https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin" target="_blank" rel="noopener">SR-IOV device plugin</a><span>Extra NICs (back-end) inside pods.</span></li>
+<li><a href="https://docs.nvidia.com/datacenter/tesla/mig-user-guide/" target="_blank" rel="noopener">MIG user guide</a> · <a href="https://docs.nvidia.com/vgpu/index.html" target="_blank" rel="noopener">vGPU docs</a> · <a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/gpu-operator-kubevirt.html" target="_blank" rel="noopener">GPU passthrough with KubeVirt</a><span>The three GPU-sharing options.</span></li>
+<li><a href="https://sonicfoundation.dev/" target="_blank" rel="noopener">SONiC</a> · <a href="https://www.arista.com/en/solutions/ai-networking" target="_blank" rel="noopener">Arista AI networking</a><span>Fabric vendors he named (plus Cisco).</span></li>
+<li><a href="https://www.ddn.com/" target="_blank" rel="noopener">DDN</a> · <a href="https://www.vastdata.com/" target="_blank" rel="noopener">VAST Data</a><span>Parallel / AI storage vendors.</span></li>
+<li><a href="https://developer.nvidia.com/blog/" target="_blank" rel="noopener">NVIDIA Technical Blog</a><span>His reading source.</span></li>
+<li><a href="https://brev.nvidia.com/" target="_blank" rel="noopener">NVIDIA Brev</a> · <a href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/" target="_blank" rel="noopener">DGX Spark</a><span>Rent GPUs by the hour, or buy a desk-sized box.</span></li>
+</ul></div>
+</Base>

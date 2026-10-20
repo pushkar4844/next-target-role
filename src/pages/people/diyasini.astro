@@ -1,0 +1,73 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'Key points' }, { id: 'do', label: 'Do this' },
+  { id: 'detail', label: 'In detail' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Diyasini Bandyopadhyay" description="Diyasini's advice: Google CE roles, interview rounds, agentic AI topics." brand="google" current="people">
+<Progress plan="person-diyasini" sections={sections} />
+<PersonHeader slug="diyasini" />
+
+<h2 id="key"><span class="num">1</span>Key points</h2>
+<div class="card">
+<div class="q"><b>1. Target Customer Engineer, Platform or Infra Modernization.</b><span>AI/ML and FDE roles want proven agentic AI deployment experience, which you don't have yet. Start in infra modernization and move toward AI later.</span></div>
+<div class="q"><b>2. No LeetCode.</b><span>Rounds: recruiter → GCA → Googleyness → 1–2 technical (RRK) → presentation. The order varies by team.</span></div>
+<div class="q"><b>3. GCA and Googleyness carry real weight.</b><span>"It's not that I passed the technical round, so I've won half the battle. It doesn't work like that."</span></div>
+<div class="q"><b>4. Agentic AI is asked even for infra roles.</b><span>Know ADK, MCP, A2A, agent hosting, develop → build → scale → govern, evals, "harness engineering", and System 1 vs System 2 models.</span></div>
+<div class="q"><b>5. Apply in January.</b><span>Headcount locks in December, so most cloud openings appear in January.</span></div>
+</div>
+
+<h2 id="do"><span class="num">2</span>Do this</h2>
+<div class="week"><h3>Diyasini's actions <span>tick as you go</span></h3>
+<div class="task"><input type="checkbox" id="dy1"><label for="dy1">Watch the Jeff H Sipe Googleyness and GCA videos and practice 10 answers out loud.<span class="done-when">Done when 10 answers are recorded and reviewed.</span></label></div>
+<div class="task"><input type="checkbox" id="dy2"><label for="dy2">Prepare her 3 example technical questions: on-prem → cloud migration journey, hosting in China with no region, Instagram-like app at global scale.<span class="done-when">Done when each is drawn and explained in under 15 minutes.</span></label></div>
+<div class="task"><input type="checkbox" id="dy3"><label for="dy3">Prepare the dashboard-adoption Googleyness question ("sales team isn't using the dashboard; drive adoption").<span class="done-when">Done when your answer has steps, stakeholders and a success metric.</span></label></div>
+<div class="task"><input type="checkbox" id="dy4"><label for="dy4">Learn the agentic AI list: ADK, MCP (and why not a plain API), A2A, hosting an agent, develop/build/scale/govern, evals, harness and loop engineering, graph vs loop agents, System 1 vs System 2.<span class="done-when">Done when you can explain each one in 2 sentences.</span></label></div>
+<div class="task"><input type="checkbox" id="dy5"><label for="dy5">Read 15 Google Customer Engineer interview reports on Glassdoor and Medium, including similar titles (Solutions Architect, Cloud Architect).<span class="done-when">Done when your question bank has 30+ real questions.</span></label></div>
+<div class="task"><input type="checkbox" id="dy6"><label for="dy6">Optional: Professional Cloud Architect or Associate Cloud Engineer certification. Helps, but not required.<span class="done-when">Done when booked (already in the Google plan for Dec 19).</span></label></div>
+<div class="task"><input type="checkbox" id="dy7"><label for="dy7">Subscribe to Google Cloud Tech and IBM Technology on YouTube; watch one 10–15 minute video a day.<span class="done-when">Done when it's a daily habit.</span></label></div>
+</div>
+
+<h2 id="detail"><span class="num">3</span>In detail</h2>
+<div class="card">
+<b>Customer-facing roles at Google</b>
+<div class="q"><b>Customer Engineer (CE), 3 types</b><span><b>Platform CE:</b> generalist across infra modernization and AI/ML. <b>Specialist CE:</b> one area (infra modernization, SAP, migrations, AI/ML). <b>FDE / AI roles:</b> hands-on with AI workloads. All are tied to pre-sales: you work with sales (the FSR, Field Sales Rep), marketing and partners.</span></div>
+<div class="q"><b>Segments</b><span><b>SMB:</b> many accounts, scaled motion, no fixed list. <b>Enterprise / Corp / Select:</b> attached to an FSR, top ~50–100 accounts, all their workloads (e.g. migrating from AWS to GCP).</span></div>
+<div class="q"><b>What you actually do</b><span>End-to-end technical account work with the FSR: workload and technical specs, demos (often built from scratch), workshops, bringing in Google's Professional Services Organization (PSO) or partners for implementation, partner enablement.</span></div>
+<div class="q"><b>Internal cloud architects</b><span>A different role. They build demo environments, assets and best practices inside Google; not live on customer environments. Professional Services (PSO) is customer-facing delivery.</span></div>
+<div class="q"><b>Titles to search</b><span>"Customer Engineer", "Solutions Architect", "Cloud Architect" (also "Solution Engineering"); wording varies by team. AWS L5 = Google L4 (IC4).</span></div>
+</div>
+<div class="card">
+<b>Interview process</b>
+<div class="q"><b>Order</b><span>Recruiter screen → then GCA or technical first, depending on the hiring manager. A strong first technical round can replace the second. GCA and Googleyness are one round each and mandatory. The last round is the presentation.</span></div>
+<div class="q"><b>Role-Related Knowledge</b><span>Cloud fundamentals and situation questions: full on-prem → cloud journey (plan, scope…); customer wants to host in China but there's no Google region; architecture of an Instagram-like app and how to scale it globally. Plus how agentic AI fits, even for infra modernization roles.</span></div>
+<div class="q"><b>Googleyness</b><span>Behavioral and situational, answered in STAR. Example: "A dashboard was built for the sales team but they aren't using it. How would you drive adoption?" They test your thinking process, not technology.</span></div>
+<div class="q"><b>Presentation</b><span>Panel of 3–4. You get a problem statement and present a solution to them.</span></div>
+<div class="q"><b>GCP knowledge</b><span>Not asked directly; interviews are cloud-agnostic. Know the GCP names for what you do on AWS, which database fits (e.g. "SQL vs Postgres, which one and how do you scale?"), and how storage options differ. Show your thought process and ask follow-up questions.</span></div>
+<div class="q"><b>Market note</b><span>Migrations are no longer just on-prem → cloud. They are now "migration plus optimization". Read up on recent changes before interviews.</span></div>
+</div>
+<div class="card">
+<b>Agentic AI: what gets asked</b>
+<div class="q"><b>The list she gave</b><span>ADK; MCP: how to use it and connect to an MCP server; A2A protocol; how to host an agent; the 4 stages: <b>develop, build, scale, govern</b> (security for govern, user base and management for scale); <b>evals</b>: how you measure an agent beyond human-in-the-loop.</span></div>
+<div class="q"><b>Concept questions</b><span>Why use MCP instead of a normal API, and what's underneath MCP? The shift from prompt engineering to "harness engineering"; graph-based vs loop-based agents; System 1 (fast decision) vs System 2 (reasoning) models.</span></div>
+</div>
+<div class="card">
+<b>Culture</b>
+<div class="q"><b>No stack ranking</b><span>Year-end ratings exist; "significant impact" is achievable. Layoffs follow business priorities (currently AI first), not a quarterly stack.</span></div>
+<div class="q"><b>20% projects</b><span>Spend 20% of your time with another team (e.g. as an AI/ML specialist) to learn and test a future move.</span></div>
+<div class="q"><b>Her career view</b><span>With tools like Claude Code, tech stack matters less than knowing whether the AI-written code is right. She'd invest in <b>security</b> (infra and data) and <b>data pipelines and cleaning</b>. Prefers Google for growth: horizontal and vertical moves, 20% projects.</span></div>
+</div>
+
+<h2 id="links"><span class="num">4</span>Links</h2>
+<div class="card"><ul class="links">
+<li><a href="https://www.youtube.com/c/JeffHSipe" target="_blank" rel="noopener">Jeff H Sipe: Practice Interviews (YouTube)</a><span>The channel she recommended for Googleyness and GCA questions.</span></li>
+<li><a href="https://www.youtube.com/@googlecloudtech" target="_blank" rel="noopener">Google Cloud Tech (YouTube)</a><span>Short 10–15 minute explainers on infra modernization and AI.</span></li>
+<li><a href="https://www.youtube.com/@IBMTechnology" target="_blank" rel="noopener">IBM Technology (YouTube)</a><span>Her source for recent AI/ML concepts.</span></li>
+<li><a href="https://www.glassdoor.com/Interview/Google-Customer-Engineer-Interview-Questions-EI_IE9079.0,6_KO7,24.htm" target="_blank" rel="noopener">Glassdoor: Google Customer Engineer interviews</a><span>Real questions; also check similar titles and Medium write-ups.</span></li>
+<li><a href="https://cloud.google.com/learn/certification/cloud-architect" target="_blank" rel="noopener">Professional Cloud Architect</a> · <a href="https://cloud.google.com/learn/certification/cloud-engineer" target="_blank" rel="noopener">Associate Cloud Engineer</a><span>The two certifications she mentioned.</span></li>
+<li><a href="https://google.github.io/adk-docs/" target="_blank" rel="noopener">ADK</a> · <a href="https://modelcontextprotocol.io/" target="_blank" rel="noopener">MCP</a> · <a href="https://a2a-protocol.org/" target="_blank" rel="noopener">A2A</a><span>The three agentic AI standards on her list.</span></li>
+</ul></div>
+</Base>

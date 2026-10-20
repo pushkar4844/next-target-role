@@ -1,0 +1,18 @@
+---
+import { people } from '../data/people';
+
+interface Props {
+  track?: 'google' | 'nvidia';
+}
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const list = Astro.props.track ? people.filter((p) => p.track === Astro.props.track) : people;
+---
+<div class="people">
+  {list.map((p) => (
+    <a class={`pcard ${p.track}`} href={`${base}/people/${p.slug}/`}>
+      <span class="nm">{p.name}<b>Open →</b></span>
+      <span class="rl">{p.role}</span>
+      <span class="fc">{p.focus}</span>
+    </a>
+  ))}
+</div>

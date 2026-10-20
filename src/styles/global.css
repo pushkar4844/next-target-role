@@ -78,7 +78,8 @@ td + td,th + th{border-left:1px solid var(--line)}
 
 .q{padding:11px 0;border-top:1px solid var(--line)}
 .card > b:first-child + .q{border-top:0}
-.q b{display:block}.q span{color:var(--muted);font-size:14.5px}
+.q > b{display:block}.q > span{display:block;color:var(--muted);font-size:14.5px}
+.card > .q:first-child{border-top:0;padding-top:0}
 pre{background:var(--code);border:1px solid var(--line);border-radius:10px;padding:12px 14px;white-space:pre-wrap;font-size:13.5px;margin:8px 0}
 code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:13.5px}
 ol,ul{padding-left:22px}li{margin:4px 0}
@@ -96,3 +97,26 @@ ol,ul{padding-left:22px}li{margin:4px 0}
 .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 
 @media (max-width:720px){.row{grid-template-columns:1fr}h1{font-size:27px}}
+
+/* people */
+.crumb{color:inherit;text-decoration:none}
+.crumb:hover{text-decoration:underline}
+.people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.pcard{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c,var(--muted));border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
+.pcard:hover{transform:translateY(-2px);border-color:var(--c)}
+.pcard.google{--c:var(--google)}.pcard.nvidia{--c:var(--nvidia)}
+.pcard .nm{font-weight:700;font-size:16.5px;display:flex;justify-content:space-between;gap:8px}
+.pcard .nm b{color:var(--c);font-size:13px;font-weight:700;white-space:nowrap}
+.pcard .rl{font-size:13.5px;color:var(--muted)}
+.pcard .fc{font-size:14px}
+.said{border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:8px 0;color:var(--muted);font-style:italic}
+.fix{background:var(--no-soft);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:14.5px}
+.fix b:first-child{color:var(--no)}
+.links{list-style:none;padding:0;margin:0}
+.links li{padding:9px 0;border-top:1px solid var(--line);margin:0}
+.links li:first-child{border-top:0}
+.links a{font-weight:600}
+.links span{display:block;color:var(--muted);font-size:13.5px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;font-size:14.5px}
+.kv dt{font-weight:700}.kv dd{margin:0;color:var(--muted)}
+@media (max-width:720px){.people{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.kv dd{margin-bottom:6px}}

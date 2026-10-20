@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'How he thinks' }, { id: 'do', label: 'Do this' },
+  { id: 'detail', label: 'In detail' }, { id: 'fixes', label: 'Corrections' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Vikrant" description="How an AWS TAM sizes a GPU/HPC customer requirement." brand="nvidia" current="people">
+<Progress plan="person-vikrant" sections={sections} />
+<PersonHeader slug="vikrant" />
+
+<h2 id="key"><span class="num">1</span>How he thinks: the 5-layer sizing order</h2>
+<p class="sub">This is the order an SA walks through for any GPU/HPC requirement. Use it as your discovery script and your interview answer structure.</p>
+<div class="tbl"><table>
+<tr><th>#</th><th>Layer</th><th>Questions to ask the customer</th><th>What decides it</th></tr>
+<tr><td>1</td><td><b>Processing</b></td><td>CPU or GPU? Which GPU? How much CPU and memory per GPU does the job need?</td><td>Job profile → instance family (e.g. P5 / P6)</td></tr>
+<tr><td>2</td><td><b>Memory</b></td><td>How much RAM? Does it fit in system memory (~2 TiB on P5/P6), or do you need scratch space?</td><td>"2 TB of RAM is peanuts for HPC" → local NVMe scratch</td></tr>
+<tr><td>3</td><td><b>Storage</b></td><td>Read-intensive or write-intensive? How many IOPS? Which data is read-only (libraries, packages) vs written (outputs, checkpoints)?</td><td>Split the job: read-only on one file system, writes on another; scratch on NVMe RAID 0</td></tr>
+<tr><td>4</td><td><b>Network</b></td><td>How much bandwidth? Does it need EFA (RDMA)? Is everything in one AZ and subnet?</td><td>One AZ + one subnet + cluster placement group; EFA isn't routable</td></tr>
+<tr><td>5</td><td><b>Cost</b></td><td>On-demand, reserved capacity, or longer commitments? How long does the project run?</td><td>Performance costs money: check the efficiency of each choice</td></tr>
+</table></div>
+<div class="note">"The more you look at each level, each layer, you have to go and fine-tune it." Then go deeper: learn what InfiniBand is to understand EFA, what the CUDA driver does, and what RDMA is.</div>
+
+<h2 id="do"><span class="num">2</span>Do this</h2>
+<div class="week"><h3>Vikrant's actions <span>tick as you go</span></h3>
+<div class="task"><input type="checkbox" id="vk1"><label for="vk1">Turn the 5-layer table into a 1-page discovery questionnaire you can use with any GPU customer.<span class="done-when">Done when it's saved in your repo and used in one mock interview.</span></label></div>
+<div class="task"><input type="checkbox" id="vk2"><label for="vk2">In a sandbox account, build the storage pattern: FSx for Lustre linked to S3 with a data repository association (DRA), export results, then unmount from all nodes and delete.<span class="done-when">Done when the output survives in S3 after the file system is deleted.</span></label></div>
+<div class="task"><input type="checkbox" id="vk3"><label for="vk3">On any instance with multiple NVMe instance-store disks, create a RAID 0 array with mdadm and benchmark it with fio against a single disk.<span class="done-when">Done when you have the speed-up number and understand that the data is lost on stop.</span></label></div>
+<div class="task"><input type="checkbox" id="vk4"><label for="vk4">Prove the S3 point: try to pip-install a package with .so libraries onto an S3 mount (Mountpoint for S3) and see the symlinks or permissions fail.<span class="done-when">Done when you can explain "S3 isn't POSIX" with your own error message.</span></label></div>
+<div class="task"><input type="checkbox" id="vk5"><label for="vk5">Write the cost comparison for one P5 for 2 weeks: on-demand vs Capacity Block vs ODCR (look up current prices on the AWS pages).<span class="done-when">Done when you have a table and a recommendation.</span></label></div>
+<div class="task"><input type="checkbox" id="vk6"><label for="vk6">Practise his customer Q&amp;A out loud: "Why can't we use S3 as our file system?" and "What problems did customers hit on this project?"<span class="done-when">Done when each answer is under 2 minutes.</span></label></div>
+<div class="task"><input type="checkbox" id="vk7"><label for="vk7">Map each AWS piece to NVIDIA and neocloud terms: EFA ↔ InfiniBand/RoCE, FSx for Lustre ↔ DDN/VAST/WEKA, placement group ↔ rail-optimized fabric, ODCR ↔ reserved cluster.<span class="done-when">Done when the table is in your NVIDIA prep notes.</span></label></div>
+</div>
+
+<h2 id="detail"><span class="num">3</span>In detail</h2>
+<div class="card">
+<b>Storage: split the job by read vs write</b>
+<div class="q"><b>Read-only parts</b><span>Packages and libraries needed to run the job are only read. Put them on a read-optimized file system: <b>FSx for NetApp ONTAP</b> or <b>FSx for OpenZFS</b>. In his experience they cost much less than FSx for Lustre (he estimated about a quarter).</span></div>
+<div class="q"><b>Write-heavy parts</b><span>For maximum write IOPS use <b>FSx for Lustre</b>. It stripes data across storage servers (like RAID 0), so a bigger file system is faster.</span></div>
+<div class="q"><b>Scratch on local NVMe</b><span>GPU instances come with local NVMe instance-store disks (about 30 TB on P5/P6). Create one file system across them with <b>RAID 0</b> (striping) for speed; RAID 1 defeats the purpose. It's <b>ephemeral</b>: if the instance goes, data is lost. So process on NVMe, then write the final output to FSx or S3.</span></div>
+<div class="q"><b>When EBS is too slow</b><span>Need very high IOPS (he said 65,000+)? Use instance-store NVMe rather than EBS volumes. See the gp3 numbers under Corrections.</span></div>
+<div class="q"><b>Performance costs money</b><span>A big Lustre file system can cost $1,000–$10,000 a week even when idle, so weigh efficiency, not only speed.</span></div>
+</div>
+<div class="card">
+<b>Network</b>
+<div class="q"><b>Same AZ, same subnet</b><span>Keep compute and file system in one AZ for maximum bandwidth and no inter-AZ data charges. Use <b>placement groups</b> to keep instances physically close.</span></div>
+<div class="q"><b>EFA</b><span>AWS's RDMA network for HPC and ML. EFA traffic can't be routed, so it doesn't cross subnets, AZs or regions; everything must sit in one subnet and AZ. It's AWS's equivalent of NVIDIA InfiniBand: learn InfiniBand to understand EFA.</span></div>
+</div>
+<div class="card">
+<b>Customer Q&amp;A, as he answers it</b>
+<div class="q"><b>"Why can't we use S3 as a file system?"</b><span>HPC needs very fast reads and writes, and S3 isn't POSIX-compliant: no file permissions, no symlinks. Installed packages contain .so (shared library) files that rely on symlinks, so they break. Use S3 for read-only data; or create FSx for Lustre linked to S3 with a <b>data repository association (DRA)</b>, run the project, export results to S3 (cheap), then delete the file system to stop paying. For small read-only files without symlinks, <b>S3 Express One Zone</b> (single AZ) works.</span></div>
+<div class="q"><b>"What problems do customers hit?"</b><span>1) They delete the file system straight away. <b>Unmount it from every compute node first</b>, then stop or delete. 2) Big GPU instances take 6–7 minutes to start, so <b>bake a custom AMI</b> to cut startup time. 3) These instances cost on the order of $100–150 an hour on-demand (his figure), and capacity is scarce. Use an <b>On-Demand Capacity Reservation (ODCR)</b> to hold them for a set time, and work with the account team on discounts: 1-year commitments help, 3-year helps more. With an ODCR the instances sit in your account "like your own data center".</span></div>
+</div>
+
+<h2 id="fixes"><span class="num">4</span>Corrections (checked on AWS pages, Oct 2026)</h2>
+<div class="fix"><b>Instance families.</b> P5 = 8× <b>H100</b>; P5e / P5en = 8× <b>H200</b> (there's no "H300"). P6 = <b>B200 / B300</b> (Blackwell); P6e UltraServers = <b>GB200 / GB300 NVL72</b>. P5 and P6: 2 TiB RAM, up to ~30 TB local NVMe (P5: 8× 3.84 TB).</div>
+<div class="fix"><b>EBS gp3 IOPS.</b> Baseline is 3,000 IOPS, and you can provision up to <b>80,000</b> (at 500 IOPS per GiB), not "6,000 max". For more, or lower latency, use io2 Block Express or local NVMe.</div>
+<div class="fix"><b>Costs.</b> His $100–150/hr and "Lustre ≈ 4× OpenZFS" are estimates. Check the current on-demand, Capacity Block and FSx prices before quoting a customer.</div>
+<div class="fix"><b>Also worth knowing:</b> <a href="https://aws.amazon.com/ec2/capacityblocks/" target="_blank" rel="noopener">EC2 Capacity Blocks for ML</a> reserve GPU clusters for days or weeks, often a better fit than an ODCR for short projects.</div>
+
+<h2 id="links"><span class="num">5</span>Links</h2>
+<div class="card"><ul class="links">
+<li><a href="https://aws.amazon.com/ec2/instance-types/p5/" target="_blank" rel="noopener">EC2 P5</a> · <a href="https://aws.amazon.com/ec2/instance-types/p6/" target="_blank" rel="noopener">EC2 P6</a><span>GPU instance specs.</span></li>
+<li><a href="https://aws.amazon.com/fsx/lustre/" target="_blank" rel="noopener">FSx for Lustre</a> · <a href="https://docs.aws.amazon.com/fsx/latest/LustreGuide/create-dra-linked-data-repo.html" target="_blank" rel="noopener">Linking to S3 (DRA)</a> · <a href="https://docs.aws.amazon.com/fsx/latest/LustreGuide/performance.html" target="_blank" rel="noopener">Lustre performance</a></li>
+<li><a href="https://aws.amazon.com/fsx/netapp-ontap/" target="_blank" rel="noopener">FSx for NetApp ONTAP</a> · <a href="https://aws.amazon.com/fsx/openzfs/" target="_blank" rel="noopener">FSx for OpenZFS</a><span>Read-heavy file systems.</span></li>
+<li><a href="https://aws.amazon.com/s3/storage-classes/express-one-zone/" target="_blank" rel="noopener">S3 Express One Zone</a> · <a href="https://github.com/awslabs/mountpoint-s3" target="_blank" rel="noopener">Mountpoint for S3</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html" target="_blank" rel="noopener">Instance store</a> · <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/raid-config.html" target="_blank" rel="noopener">RAID 0 on EC2</a> · <a href="https://docs.aws.amazon.com/ebs/latest/userguide/general-purpose.html" target="_blank" rel="noopener">EBS gp3 limits</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html" target="_blank" rel="noopener">EFA</a> · <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html" target="_blank" rel="noopener">Placement groups</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-capacity-reservations.html" target="_blank" rel="noopener">ODCR</a> · <a href="https://aws.amazon.com/ec2/capacityblocks/" target="_blank" rel="noopener">Capacity Blocks for ML</a> · <a href="https://aws.amazon.com/savingsplans/compute-pricing/" target="_blank" rel="noopener">Savings Plans</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-ami.html" target="_blank" rel="noopener">Create a custom AMI</a><span>Cut the 6–7 minute startup.</span></li>
+<li><a href="https://aws.amazon.com/hpc/parallelcluster/" target="_blank" rel="noopener">AWS ParallelCluster</a> · <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod.html" target="_blank" rel="noopener">SageMaker HyperPod</a><span>How AWS packages all five layers for HPC and ML clusters.</span></li>
+</ul></div>
+</Base>

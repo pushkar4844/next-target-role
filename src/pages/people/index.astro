@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import PeopleGrid from '../../components/PeopleGrid.astro';
+---
+<Base title="People" description="Everything each mentor and colleague said, with links and actions." current="people">
+  <p class="eyebrow" style="margin-top:24px">People</p>
+  <h1>What each person said</h1>
+  <p class="sub">One page per person: their key points, what to do about them, everything they covered in detail, and every link they mentioned. Your progress on each page's actions is saved in this browser.</p>
+
+  <h2><span class="num">1</span>Google track</h2>
+  <PeopleGrid track="google" />
+
+  <h2><span class="num">2</span>AI infra / NVIDIA track</h2>
+  <PeopleGrid track="nvidia" />
+</Base>

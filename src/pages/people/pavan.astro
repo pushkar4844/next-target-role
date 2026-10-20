@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'Key points' }, { id: 'do', label: 'Do this' },
+  { id: 'detail', label: 'In detail' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Pavan Kumar Konnaki" description="Pavan's advice: stacking skills, agents, Google interview loop." brand="google" current="people">
+<Progress plan="person-pavan" sections={sections} />
+<PersonHeader slug="pavan" />
+
+<h2 id="key"><span class="num">1</span>Key points</h2>
+<div class="card">
+<div class="q"><b>1. Stack skills; don't stay a niche specialist.</b><span>Under 10 years, combine OS fundamentals + one programming language + one cloud, deep enough to say "L200–L300" on each. Mainframe is valuable but niche. Migrations are being sped up by automation, so being "the mainframe person" alone isn't an advantage.</span></div>
+<div class="q"><b>2. Use agents to work faster.</b><span>He built reusable agent templates (e.g. one that only writes Terraform) and cut customer demo prep from 6–8 hours to 1–1.5 hours, about 80% less. Use the saved time to keep learning.</span></div>
+<div class="q"><b>3. The interview tests concepts, not GCP.</b><span>Any one cloud is fine if you can explain the fundamentals: when and which load balancer, cache, database, and the cost vs reliability trade-off.</span></div>
+<div class="q"><b>4. Write your stories before the interview.</b><span>Audit your last 1–2 years, personal and professional. Write every scenario down with details and numbers. One story can answer 4–5 questions.</span></div>
+<div class="q"><b>5. Pick the manager and team, not the company.</b><span>Ask for a coffee chat with the hiring manager before accepting.</span></div>
+</div>
+
+<h2 id="do"><span class="num">2</span>Do this</h2>
+<div class="week"><h3>Pavan's actions <span>tick as you go</span></h3>
+<div class="task"><input type="checkbox" id="pv1"><label for="pv1">Build 1 agent template that removes repeat work (e.g. Terraform module generator or migration-inventory summarizer) using Amazon Bedrock or Google ADK.<span class="done-when">Done when a demo that used to take hours takes under 90 minutes.</span></label></div>
+<div class="task"><input type="checkbox" id="pv2"><label for="pv2">Write the 20 scenarios from your last 1–2 years (personal + work) in STAR format, with numbers and names checked.<span class="done-when">Done when each one maps to 3+ Googleyness/leadership questions.</span></label></div>
+<div class="task"><input type="checkbox" id="pv3"><label for="pv3">Watch 5 episodes of AWS "This Is My Architecture" and redraw each architecture from memory.<span class="done-when">Done when you can explain each in 3 minutes, with trade-offs.</span></label></div>
+<div class="task"><input type="checkbox" id="pv4"><label for="pv4">Self-rate L100–L300 on: Linux/OS fundamentals, Python, cloud architecture. Close the weakest to L200.<span class="done-when">Done when all three are at L200 or higher.</span></label></div>
+<div class="task"><input type="checkbox" id="pv5"><label for="pv5">Find a 1–2 month "shadow" project in the role you want (cover for someone on leave, or a side project), even inside AWS.<span class="done-when">Done when you've done real work in the target role.</span></label></div>
+<div class="task"><input type="checkbox" id="pv6"><label for="pv6">In every interview loop, ask: "Can I have a 20-minute chat with the hiring manager?"<span class="done-when">Done when it's on your interview checklist.</span></label></div>
+</div>
+
+<h2 id="detail"><span class="num">3</span>In detail</h2>
+<div class="card">
+<b>Career strategy</b>
+<div class="q"><b>Skill stack</b><span>His own path: OS (Linux, Windows) and some databases → cloud engineer → TAM → pre-sales architect → Google pre-sales (data, migrations, mostly AI now). Fundamentals first: one OS deeply, one language well, then understand how a cloud's 150+ services fit together in designs.</span></div>
+<div class="q"><b>Agents are now basic literacy</b><span>"It's becoming fundamental, just like understanding any language." Learn how agents are built and hosted (Bedrock on AWS, Vertex AI on Google), pick one or two that speed up your own work, then go deeper into building an end-to-end pipeline for one use case. Biggest wins are on repetitive, templatable work, mainframe modernization included.</span></div>
+<div class="q"><b>Google's 20% projects</b><span>Teams post small projects; anyone with spare time can join and get real experience in another role (PM, program manager…) without leaving their job. Same idea anywhere: find gaps (maternity or paternity leave, side projects) to get 1–2 months of hands-on time in the role you want before switching. "If you move into a role without understanding it completely… your old skill set will go waste."</span></div>
+<div class="q"><b>Manager &amp; team filter</b><span>His main filter when moving: the manager and team. Ask for a coffee chat even for internal moves at Amazon. People overlook it for tech and package, but at mid-level it decides your experience.</span></div>
+</div>
+<div class="card">
+<b>Roles and levels</b>
+<div class="q"><b>Role mapping</b><span>AWS ProServe ≈ Google Cloud Consulting (cloud architect, hands-on). Customer Engineer = pre-sales; you guide the customer without hands-on access, like an account Solutions Architect at AWS.</span></div>
+<div class="q"><b>Levels</b><span>"It's always level minus one from Amazon to Google." AWS L5 = Google L4. Six years is not Google L5. Google levels are not public and don't appear in job descriptions; you only learn your level at offer stage.</span></div>
+<div class="q"><b>Agents for migration at Google</b><span>He hasn't worked on external migration agents; internal employee agents exist, similar to AWS's.</span></div>
+</div>
+<div class="card">
+<b>Interview loop (customer-facing roles)</b>
+<div class="q"><b>1. Recruiter screen</b><span>Checks suitability. After shortlisting, the recruiter sends topics and a schedule.</span></div>
+<div class="q"><b>2. Role-Related Knowledge (RRK)</b><span>Usually 1 round (2 at higher levels). Tests depth in your chosen area: compute, data or migrations.</span></div>
+<div class="q"><b>3. Presentation</b><span>You present a solution and handle the interviewers' objections. Tests communication, objection handling and sensitive situations.</span></div>
+<div class="q"><b>4. Googleyness &amp; Leadership</b><span>Like Amazon's leadership principles. Hypothetical ("what would you do if…") and past-behavior ("tell me about a time you failed / handled an objection").</span></div>
+<div class="q"><b>How to answer</b><span>STAR (situation, task, action, result). Always take 1–2 minutes with pen and paper to note keywords before answering. State your assumptions or ask probing questions; don't just jump in. Not every design must be highly available. Some customers need the most cost-effective option, like certification questions. Use the Well-Architected pillars as a checklist.</span></div>
+</div>
+
+<h2 id="links"><span class="num">4</span>Links</h2>
+<div class="card"><ul class="links">
+<li><a href="https://aws.amazon.com/architecture/this-is-my-architecture/" target="_blank" rel="noopener">AWS "This Is My Architecture"</a><span>The whiteboard series Pavan used to prepare for system design ("show me your architecture").</span></li>
+<li><a href="https://aws.amazon.com/bedrock/agents/" target="_blank" rel="noopener">Amazon Bedrock Agents</a><span>Build your first work-saving agent on the platform you already use.</span></li>
+<li><a href="https://google.github.io/adk-docs/" target="_blank" rel="noopener">Google Agent Development Kit (ADK)</a><span>Google's equivalent, and useful for Google interviews.</span></li>
+<li><a href="https://aws.amazon.com/architecture/well-architected/" target="_blank" rel="noopener">AWS Well-Architected Framework</a><span>The checklist he mentioned for trade-off answers.</span></li>
+</ul></div>
+</Base>

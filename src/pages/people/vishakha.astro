@@ -1,0 +1,69 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'Key points' }, { id: 'do', label: 'Do this' },
+  { id: 'detail', label: 'In detail' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Vishakha Sadhwani" description="Vishakha's path from Google Cloud Architect to NVIDIA Solutions Architect." brand="nvidia" current="people">
+<Progress plan="person-vishakha" sections={sections} />
+<PersonHeader slug="vishakha" />
+
+<h2 id="key"><span class="num">1</span>Key points</h2>
+<div class="card">
+<div class="q"><b>1. Her NVIDIA process took 6–8 months.</b><span>Cloud confidence wasn't enough: interviewers asked "a bunch of model optimization questions" she had to learn.</span></div>
+<div class="q"><b>2. Go AI infrastructure (self-managed), not managed ML.</b><span>Use your cloud experience ("it's gold"): how models are trained and served on Kubernetes, storage near compute, GPU placement, observability. Not SageMaker-style data science, which is crowded.</span></div>
+<div class="q"><b>3. Depth levels.</b><span>LLM fundamentals at 100 level. Deployment and serving at 300–400 level.</span></div>
+<div class="q"><b>4. Kubernetes is your edge: security + operators.</b><span>She was drilled on container security (she holds CKS). Know OPA Gatekeeper and admission controllers, CRDs, and operators, including writing one. CKA is often a preferred qualification.</span></div>
+<div class="q"><b>5. Apply wider than NVIDIA.</b><span>Frontier AI companies (Anthropic, Perplexity, Fireworks AI) want cloud people. Use the AWS name on your resume.</span></div>
+</div>
+
+<h2 id="do"><span class="num">2</span>Do this</h2>
+<div class="week"><h3>Vishakha's actions <span>tick as you go</span></h3>
+<div class="task"><input type="checkbox" id="vs1"><label for="vs1">Make a "know / don't know" doc from the NVIDIA AI Infrastructure &amp; Operations course outline plus the target JD (even without buying the course).<span class="done-when">Done when every topic is marked Know / Shaky / Don't know.</span></label></div>
+<div class="task"><input type="checkbox" id="vs2"><label for="vs2">Whiteboard one "don't know" topic a day (e.g. quantization), then go deep with a chatbot until you can explain it.<span class="done-when">Done when it's a daily habit for 30 days.</span></label></div>
+<div class="task"><input type="checkbox" id="vs3"><label for="vs3">Within 5 days, be able to explain how a model is deployed on Kubernetes for the 3 workloads: preprocessing, training, inference.<span class="done-when">Done when you can talk through it for 5 minutes.</span></label></div>
+<div class="task"><input type="checkbox" id="vs4"><label for="vs4">Write the storage answer: object vs file vs block for ML, where weights live, caching locally on the VM/instance, and how fast a model loads.<span class="done-when">Done when you can defend a choice for training and for inference.</span></label></div>
+<div class="task"><input type="checkbox" id="vs5"><label for="vs5">Kubernetes security: deploy OPA Gatekeeper with 2 policies; add RBAC and a NetworkPolicy between two microservices.<span class="done-when">Done when a bad pod is rejected and cross-namespace traffic is blocked.</span></label></div>
+<div class="task"><input type="checkbox" id="vs6"><label for="vs6">Personal project: deploy a CRD + operator (Kubebuilder) that manages a model server.<span class="done-when">Done when it's in your repo (NVIDIA plan, Lab 4b).</span></label></div>
+<div class="task"><input type="checkbox" id="vs7"><label for="vs7">Use Google Cloud Skills Boost GPU labs (temporary T4/L4 for 2–3 hours) to deploy a model cheaply.<span class="done-when">Done when 1 model is served on a lab GPU.</span></label></div>
+<div class="task"><input type="checkbox" id="vs8"><label for="vs8">Queue NVIDIA's free courses on generative AI/LLMs, agentic AI and RAG; listen while doing chores.<span class="done-when">Done when 3 are finished.</span></label></div>
+<div class="task"><input type="checkbox" id="vs9"><label for="vs9">Ask 3 AWS friends how their customers deploy GPU workloads on AWS today.<span class="done-when">Done when you have 3 real patterns written down.</span></label></div>
+</div>
+
+<h2 id="detail"><span class="num">3</span>In detail</h2>
+<div class="card">
+<b>Her path</b>
+<div class="q"><b>Timeline</b><span>AWS cloud/support engineer → Google Cloud Architect → NVIDIA Solutions Architect. At Google, years 1–2 she was a Kubernetes specialist (DevOps, CI/CD, containers), which gave her an edge. Years 3–4 she upskilled in AI workflows. She started interviewing with NVIDIA "last year" and took 6–8 months to land the role.</span></div>
+<div class="q"><b>What she did with customers</b><span>Customers deployed custom models on GKE. She advised on storage placement close to compute, optimizing clusters, placing GPU nodes together, <b>topology-aware scheduling</b>, and observability (Prometheus, Grafana). As an architect she designed, connected components, ran PoCs and gave end-to-end demos, rather than being hands-on.</span></div>
+</div>
+<div class="card">
+<b>Two paths in cloud + AI</b>
+<div class="q"><b>AI infrastructure (her pick for you)</b><span>How models are trained and served on Kubernetes (EKS/GKE), serverless or raw instances. Infra knowledge of compute, storage, networking between GPU nodes, and data transfer latency.</span></div>
+<div class="q"><b>Managed ML services</b><span>SageMaker-style: pick a model, customize in notebooks, serve an endpoint. Closer to data science; a big umbrella with lots of buzzwords and competition.</span></div>
+<div class="q"><b>Why infra</b><span>"We are not data scientists, not AI engineers building LLM apps. We help get models deployed and served." Experienced hires (5–7 yrs) are expected at intermediate–advanced level.</span></div>
+<div class="q"><b>Inference = a black box to optimize</b><span>A prompt that takes 5 s is a bad experience. Your job is to get it to 2–3 s through model tuning and job scheduling on Kubernetes.</span></div>
+</div>
+<div class="card">
+<b>How she prepared</b>
+<div class="q"><b>The course as a gap map</b><span>She took NVIDIA's paid AI Infrastructure &amp; Operations course (didn't take the certificate). It gave her a mind map of what she didn't know. Then, for each topic, the job description + a chatbot to go deeper, and a whiteboard with daily topics (e.g. quantization techniques). By interview time she knew "at least a little" about each.</span></div>
+<div class="q"><b>Storage example she gave</b><span>Object, file and block storage behave differently for ML. Models on Kubernetes load weights from remote object storage, so transfer speed decides how fast a model loads and serves. Decide: object storage, hot storage nearby, or a local cache on the VM (cloud caching services exist).</span></div>
+<div class="q"><b>Interview shape</b><span>Like AWS: several rounds. For SA: technical rounds, design rounds, deep dives on infrastructure for ML applications. A coding or scripting online assessment is possible. All traditional-app knowledge must translate to ML workloads: training, inference, preprocessing.</span></div>
+<div class="q"><b>Kubernetes security</b><span>Beyond IAM: application and infrastructure security, how microservices communicate, RBAC, then OPA Gatekeeper and policy admission controllers.</span></div>
+<div class="q"><b>Advanced Kubernetes</b><span>CRDs and operators are crucial for ML workloads; some companies ask you to write custom operators (requires code). Kubernetes helps in any future role, even data engineering. Certification optional, but CKA is often preferred.</span></div>
+</div>
+
+<h2 id="links"><span class="num">4</span>Links</h2>
+<div class="card"><ul class="links">
+<li><a href="https://www.nvidia.com/en-us/learn/certification/ai-infrastructure-operations-associate/" target="_blank" rel="noopener">NVIDIA AI Infrastructure &amp; Operations (NCA-AIIO)</a><span>Exam page lists the "AI Infrastructure and Operations Fundamentals" course. Exam: $125, 50 questions, 60 min.</span></li>
+<li><a href="https://www.nvidia.com/en-us/learn/learning-path/" target="_blank" rel="noopener">NVIDIA learning paths</a> · <a href="https://learn.nvidia.com/" target="_blank" rel="noopener">NVIDIA DLI</a><span>Free courses she pointed to: generative AI/LLMs, agentic AI, RAG.</span></li>
+<li><a href="https://www.cloudskillsboost.google/" target="_blank" rel="noopener">Google Cloud Skills Boost</a><span>Labs with temporary T4/L4 GPUs.</span></li>
+<li><a href="https://cloud.google.com/kubernetes-engine/docs/concepts/machine-learning" target="_blank" rel="noopener">GKE for AI/ML</a><span>Her day job: serving and training on GKE.</span></li>
+<li><a href="https://open-policy-agent.github.io/gatekeeper/website/docs/" target="_blank" rel="noopener">OPA Gatekeeper</a> · <a href="https://kubernetes.io/docs/concepts/security/" target="_blank" rel="noopener">Kubernetes security</a><span>Policy admission control and the security model.</span></li>
+<li><a href="https://kubernetes.io/docs/concepts/extend-kubernetes/operator/" target="_blank" rel="noopener">Operator pattern</a> · <a href="https://book.kubebuilder.io/" target="_blank" rel="noopener">Kubebuilder book</a><span>Build your own operator.</span></li>
+<li><a href="https://training.linuxfoundation.org/certification/certified-kubernetes-security-specialist/" target="_blank" rel="noopener">CKS</a> · <a href="https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/" target="_blank" rel="noopener">CKA</a><span>She holds CKS; CKA is often "preferred".</span></li>
+<li><a href="https://www.anthropic.com/careers" target="_blank" rel="noopener">Anthropic</a> · <a href="https://www.perplexity.ai/hub/careers" target="_blank" rel="noopener">Perplexity</a> · <a href="https://fireworks.ai/careers" target="_blank" rel="noopener">Fireworks AI</a><span>Frontier companies she said to apply to.</span></li>
+</ul></div>
+</Base>

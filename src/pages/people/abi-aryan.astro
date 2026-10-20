@@ -1,0 +1,124 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'Her method' }, { id: 'p1', label: 'Project 1' }, { id: 'p2', label: 'Project 2' },
+  { id: 'ideas', label: 'Her ideas' }, { id: 'read', label: 'Reading list' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Abi Aryan" description="Abi Aryan's two inference projects, her method and reading list." brand="nvidia" current="people">
+<Progress plan="person-abi" sections={sections} />
+<PersonHeader slug="abi-aryan" />
+
+<div class="card next">
+  <div class="eyebrow">Do this next</div>
+  <p class="act">Start Project 1, step 1: one GPU node on EKS serving an 8B model with vLLM. Both projects then give you real numbers for your resume and for NVIDIA, CoreWeave and Anthropic-style interviews.</p>
+</div>
+
+<h2 id="key"><span class="num">1</span>Her method</h2>
+<div class="card">
+<div class="q"><b>"Stop collecting courses, videos and repos. Start practising."</b><span>Take <b>one</b> inference request and follow it end to end. Don't stop until you can answer each question <b>with evidence</b>:</span></div>
+<div class="q"><b>The 6 questions</b><span>1) How does the serving engine schedule it? 2) Where does its KV cache live, and who owns that memory? 3) Which component moves data between CPU, GPU and network? 4) What exact CPU, GPU, memory and network paths does it touch? 5) Why did the scheduler put it on this hardware and not another? 6) What do the traces actually prove is the bottleneck?</span></div>
+<div class="q"><b>Her 6-step order (kernels last)</b><span>1) Request path: gateway → router → scheduler → engine → GPU. 2) Prefill vs decode: two workloads in one word. 3) KV cache as a first-class resource. 4) Batching, queues, SLOs (TTFT, TPOT). 5) Parallelism: data, tensor, pipeline, expert. 6) Only then CUDA, kernels, compilers, "when you know which millisecond you are buying."</span></div>
+<div class="q"><b>Her philosophy</b><span>"Don't accept the abstraction. Understand what the system actually does. Take it apart. Measure it." Good pipeline design starts at observability and platform engineering, not at a pull request into vLLM. That's where your DevOps/SRE background is an advantage.</span></div>
+<div class="q"><b>The role she describes</b><span>An "inference SRE / performance engineer" who sees across software (vLLM/SGLang config), hardware (DCGM, thermals, drivers), network (InfiniBand, RoCE) and storage (NVMe, cold model loads). When p95 TTFT jumps from ~180 ms to 2.1 s while GPU utilization looks fine at ~85%, each team says "my layer is healthy". The problem lives between them.</span></div>
+</div>
+
+<h2 id="p1"><span class="num">2</span>Project 1: Serve, measure, price</h2>
+<p class="sub">Goal: one model on one GPU, measured honestly, with a cost per million tokens and a break-even point against the OpenAI API.</p>
+<div class="week"><h3>Project 1 steps <span>~2 weekends · 1 GPU</span></h3>
+<div class="task"><input type="checkbox" id="a1a"><label for="a1a">Deploy: EKS cluster + 1 GPU node (single-GPU instances such as g6e or p5.4xlarge with 1× H100). Install the NVIDIA GPU Operator. Run vLLM as a Deployment serving an 8B model (e.g. Llama-3.1-8B-Instruct) behind its OpenAI-compatible API.<span class="done-when">Done when curl to /v1/chat/completions returns tokens.</span></label></div>
+<div class="task"><input type="checkbox" id="a1b"><label for="a1b">Observe: kube-prometheus-stack scraping vLLM /metrics and dcgm-exporter. Grafana panels: running and waiting requests (concurrency), KV cache usage %, TTFT, inter-token latency, end-to-end latency, generation tokens/sec, preemptions, GPU utilization and memory.<span class="done-when">Done when one dashboard shows all panels live.</span></label></div>
+<div class="task"><input type="checkbox" id="a1c"><label for="a1c">Load test: Locust (or <code>vllm bench serve</code>) ramping concurrency 1 → 8 → 32 → 64 → 128 → 256 until you see errors, preemptions or OOM. Record throughput, TTFT p50/p95, ITL, error rate, and how long a fixed batch of 1,000 prompts takes.<span class="done-when">Done when you have a table per concurrency level and know the breaking point.</span></label></div>
+<div class="task"><input type="checkbox" id="a1d"><label for="a1d">Turn the knobs one at a time and re-run: <code>--max-num-seqs</code>, <code>--max-num-batched-tokens</code>, <code>--gpu-memory-utilization</code>, <code>--max-model-len</code>, <code>--enable-prefix-caching</code>, <code>--kv-cache-dtype fp8</code>, a quantized model. Also run the same prompts in offline batch mode.<span class="done-when">Done when you can say which flag moved which metric, and by how much.</span></label></div>
+<div class="task"><input type="checkbox" id="a1e"><label for="a1e">Price it: cost per million tokens = GPU $/hour ÷ (tokens/sec × 3,600) × 1,000,000, at your best stable concurrency. Compare with the OpenAI API price for a similar model (input and output separately).<span class="done-when">Done when you have $/M tokens for self-hosted vs API.</span></label></div>
+<div class="task"><input type="checkbox" id="a1f"><label for="a1f">Break-even: monthly self-host cost (GPU $/hr × 730 + overhead) vs API cost per month as token volume grows. Find the monthly token volume, and the GPU utilization, where self-hosting wins.<span class="done-when">Done when you have one chart and one sentence: "self-host wins above X M tokens/month at Y% utilization".</span></label></div>
+<div class="task"><input type="checkbox" id="a1g"><label for="a1g">Publish: repo + Grafana screenshots + write-up (what broke, what each flag did, the cost answer).<span class="done-when">Done when the link is on your resume.</span></label></div>
+</div>
+<div class="tbl"><table>
+<tr><th>Measure</th><th>vLLM metric (current names)</th><th>Why</th></tr>
+<tr><td>Queue depth</td><td><code>vllm:num_requests_waiting</code></td><td>Earliest honest signal of overload</td></tr>
+<tr><td>Concurrency</td><td><code>vllm:num_requests_running</code></td><td>What the engine is batching now</td></tr>
+<tr><td>KV cache pressure</td><td><code>vllm:kv_cache_usage_perc</code></td><td>Memory early warning (1 = 100%)</td></tr>
+<tr><td>Time to first token</td><td><code>vllm:time_to_first_token_seconds</code></td><td>Prefill + queue: what users feel first</td></tr>
+<tr><td>Inter-token latency</td><td><code>vllm:inter_token_latency_seconds</code></td><td>Decode speed</td></tr>
+<tr><td>Queue time</td><td><code>vllm:request_queue_time_seconds</code></td><td>Waiting before work starts</td></tr>
+<tr><td>Preemptions</td><td><code>vllm:num_preemptions</code></td><td>KV cache starvation</td></tr>
+<tr><td>Throughput</td><td><code>vllm:generation_tokens</code> (rate)</td><td>Tokens/sec → $/M tokens</td></tr>
+</table></div>
+
+<h2 id="p2"><span class="num">3</span>Project 2: Scale, route, manage KV memory</h2>
+<p class="sub">Goal: autoscale on the right signals, route smartly with an API fallback, push KV memory until it breaks, and measure every breakpoint.</p>
+<div class="week"><h3>Project 2 steps <span>~3 weekends · 2+ GPUs</span></h3>
+<div class="task"><input type="checkbox" id="a2a"><label for="a2a">Autoscale on queue depth with KEDA (Prometheus trigger, her pattern below). Add a second trigger on KV cache usage as a memory guard, a fallback setting so a Prometheus outage doesn't freeze pods, and scale-to-zero with a warm-start plan.<span class="done-when">Done when a load spike adds a pod before TTFT breaks your SLO, and you've timed how long a new pod takes to serve.</span></label></div>
+<div class="task"><input type="checkbox" id="a2b"><label for="a2b">Do the memory math. Weights = parameters × bytes. KV per token = 2 × layers × KV heads × head dim × bytes; for Llama-3.1-8B in FP16 that's 2 × 32 × 8 × 128 × 2 = 128 KiB per token. Predict max concurrent tokens, then verify against <code>kv_cache_usage_perc</code>.<span class="done-when">Done when your prediction is within ~15% of the measurement.</span></label></div>
+<div class="task"><input type="checkbox" id="a2c"><label for="a2c">Separate prefill from decode: run long-prompt and chatty traffic separately, then mixed. Measure TTFT (prefill) vs ITL (decode) and decide when to scale: queue depth, KV pressure or TTFT SLO.<span class="done-when">Done when you can show how mixing them hurts both.</span></label></div>
+<div class="task"><input type="checkbox" id="a2d"><label for="a2d">Router layer: put 2+ replicas behind a router. Compare round-robin vs least-loaded vs prefix/KV-aware routing (llm-d inference scheduler or vLLM production-stack router). Track prefix cache hit rate.<span class="done-when">Done when you have TTFT and hit rate for each policy.</span></label></div>
+<div class="task"><input type="checkbox" id="a2e"><label for="a2e">Fallback: an OpenAI-compatible gateway (e.g. LiteLLM) that sends traffic to the OpenAI API when the queue or SLO breaches. Same API on both sides, so apps don't change.<span class="done-when">Done when overload shifts traffic to the API and back automatically.</span></label></div>
+<div class="task"><input type="checkbox" id="a2f"><label for="a2f">Starve the KV cache: long contexts + high concurrency until preemptions and OOM. Watch eviction and recompute. Then offload KV to CPU memory (LMCache / vLLM KV offload) and measure transfer time and its effect on TTFT, ITL and end-to-end latency.<span class="done-when">Done when you have before/after numbers for offload.</span></label></div>
+<div class="task"><input type="checkbox" id="a2g"><label for="a2g">Two GPUs: run the model with <code>--tensor-parallel-size 2</code> vs 2 single-GPU replicas. Compare throughput, TTFT and cost; note GPU scheduling (requests, topology) in Kubernetes.<span class="done-when">Done when you can say when tensor parallelism is worth it.</span></label></div>
+<div class="task"><input type="checkbox" id="a2h"><label for="a2h">Write up the breakpoints: the concurrency where the SLO breaks, where OOM starts, where API fallback is cheaper, where adding a GPU stops helping.<span class="done-when">Done when the post is published and linked from your resume.</span></label></div>
+</div>
+<p><b>Her KEDA pattern</b> (metric names updated to current vLLM):</p>
+<pre>triggers:
+  - type: prometheus            # primary: queue depth per replica
+    metadata:
+      serverAddress: http://prometheus:9090
+      query: sum(vllm:num_requests_waiting) / count(vllm:num_requests_waiting)
+      threshold: "5"
+  - type: prometheus            # guard: KV cache pressure
+    metadata:
+      serverAddress: http://prometheus:9090
+      query: max(vllm:kv_cache_usage_perc)
+      threshold: "0.8"
+# also set: fallback (replicas if Prometheus fails), minReplicaCount / warm start</pre>
+<div class="fix"><b>Metric name changed:</b> her post uses <code>vllm:gpu_cache_usage_perc</code>. Current vLLM exposes <code>vllm:kv_cache_usage_perc</code> (checked on docs.vllm.ai, Oct 2026).</div>
+
+<h2 id="ideas"><span class="num">4</span>Her ideas, in short</h2>
+<div class="card">
+<div class="q"><b>GPU utilization is not goodput</b><span>A server can look 80% busy and still miss latency SLOs. Wait time explodes as utilization nears 100% (Kingman's formula: at 30 ms service, 0.03 s wait at 50% → 0.12 s at 80% → 0.57 s at 95%). Two teams on similar hardware paid $97 vs $0.38 per million tokens. Scale on SLO violations and KV pressure, not on "the GPU looks hungry."</span></div>
+<div class="q"><b>Same GPU, 3.3 s vs 39 s</b><span>Identical weights, card and code; the request shape did it. Prefill is compute-bound, decode is memory-bound. Split TTFT from inter-token latency; never trust one p50.</span></div>
+<div class="q"><b>Agents OOM at 62% utilization ($27k weekend)</b><span>Stateless RAG drops context; agents hold HBM for the whole 50–70-turn thread with tool retries. 7 of 12 replicas died. Fix: cap context growth, time out stuck agents, price per solved task.</span></div>
+<div class="q"><b>KV cache needs a directory</b><span>On one GPU, KV is an allocator. Across a cluster it's a phone book: who has this prefix, how stale, what does a move cost. Mooncake, LMCache and cache-aware routing solve this. Hashing users to GPUs without it wastes prefixes.</span></div>
+<div class="q"><b>Mooncake's 3 cache tiers</b><span>L1 GPU HBM (fast, tiny) → L2 CPU/host memory → L3 Mooncake Store: DRAM and SSDs across the cluster over RDMA, giving global prefix reuse. Result: lower TTFT and higher throughput on the same hardware.</span></div>
+<div class="q"><b>NIXL</b><span>NVIDIA's open-source data-movement library for disaggregated serving: async, zero-copy KV transfers between prefill and decode workers across HBM, DRAM and NVMe/object storage, over RDMA, UCX, GPUDirect and EFA. Used by vLLM, SGLang and Dynamo.</span></div>
+<div class="q"><b>CPU throttling starves GPUs</b><span>Utilization drops while TTFT spikes because the container's CPU is throttled (cgroups). Put GPU utilization, serving latency, cgroup throttling counters, host queueing and CPU pressure on one timeline.</span></div>
+<div class="q"><b>Power caps</b><span>Two servers with the same utilization can react very differently to a power cap. Standard dashboards can't tell you which survives. Power, cooling, KV, queues and retries are one coupled system.</span></div>
+<div class="q"><b>SkyPilot</b><span>One portable job spec across Kubernetes, Slurm, clouds and on-prem: capacity search, spot recovery, cost-aware placement. Alternatives: dstack, Ray.</span></div>
+<div class="q"><b>Example of a finished project</b><span>A student's final project: Gemma 31B FP8 on vLLM, 2× H100 on Lambda, Envoy AI Gateway token budgets, llm-d router (prefix match first, split prefill/decode only when 2,048+ uncached tokens), LMCache for KV transfer, a warm-controller before traffic, KEDA scaling. A good bar for your Project 2.</span></div>
+</div>
+
+<h2 id="read"><span class="num">5</span>Reading list she gave (for people moving from Ops/Platform)</h2>
+<p class="sub">Her advice: don't skim. For each concept, find a real system that implements it, read its code or architecture docs, and try to break it. She assumes distributed systems basics (CAP, consistency, consensus) and some Kubernetes.</p>
+<div class="card"><b>Papers</b><ul class="links">
+<li><a href="https://arxiv.org/abs/2407.00079" target="_blank" rel="noopener">Mooncake: KVCache-centric disaggregated serving</a> · <a href="https://github.com/kvcache-ai/Mooncake" target="_blank" rel="noopener">repo</a> · <a href="https://kvcache-ai.github.io/Mooncake/" target="_blank" rel="noopener">docs</a><span>Focus on the Transfer Engine protocol, not just the architecture.</span></li>
+<li><a href="https://arxiv.org/abs/2406.03243" target="_blank" rel="noopener">Llumnix: dynamic scheduling for LLM serving</a> · <a href="https://github.com/AlibabaPAI/llumnix" target="_blank" rel="noopener">repo</a><span>The live migration protocol is the interesting part.</span></li>
+<li><a href="https://arxiv.org/abs/2407.00023" target="_blank" rel="noopener">Preble: distributed prompt scheduling</a><span>Cache-aware distributed scheduling.</span></li>
+<li><a href="https://conferences.sigcomm.org/sigcomm/2015/pdf/papers/p523.pdf" target="_blank" rel="noopener">DCQCN: congestion control for RDMA (SIGCOMM 2015)</a><span>"This math is worth working through." It's the basis of RoCE ECN tuning.</span></li>
+<li><a href="https://research.google/pubs/large-scale-cluster-management-at-google-with-borg/" target="_blank" rel="noopener">Borg</a> · <a href="https://research.google/pubs/omega-flexible-scalable-schedulers-for-large-compute-clusters/" target="_blank" rel="noopener">Omega</a><span>Scheduling theory that carries straight over to GPU clusters.</span></li>
+<li><a href="https://arxiv.org/abs/2307.12169" target="_blank" rel="noopener">Rail-only (Meta): low-cost network for training LLMs</a><span>The reality of GPU cluster networking.</span></li>
+<li><a href="https://arxiv.org/abs/2008.09213" target="_blank" rel="noopener">Gavel: heterogeneity-aware scheduling</a> · <a href="https://arxiv.org/abs/2008.12260" target="_blank" rel="noopener">Pollux</a> · <a href="https://scholar.google.com/scholar?q=Sia+heterogeneity-aware+goodput-optimized+ML-cluster+scheduling" target="_blank" rel="noopener">Sia</a> · <a href="https://arxiv.org/abs/1907.01484" target="_blank" rel="noopener">Themis</a><span>Her Oct 17 reading list: GPU cluster scheduling.</span></li>
+</ul></div>
+<div class="card"><b>Code worth reading</b><ul class="links">
+<li><a href="https://github.com/vllm-project/vllm/blob/main/vllm/v1/core/kv_cache_manager.py" target="_blank" rel="noopener">vLLM KV cache manager</a> · <a href="https://github.com/vllm-project/vllm/blob/main/vllm/v1/core/block_pool.py" target="_blank" rel="noopener">block_pool.py</a> · <a href="https://github.com/vllm-project/vllm/blob/main/vllm/v1/core/sched/scheduler.py" target="_blank" rel="noopener">scheduler.py</a><span>The KV cache allocator. She cited <code>vllm/core/block_manager.py</code>, which was removed with the V1 engine; these are the current files.</span></li>
+<li><a href="https://github.com/NVIDIA/nccl/tree/master/src/graph" target="_blank" rel="noopener">NCCL src/graph</a> (topo.cc, search.cc, rings.cc)<span>Topology detection, ring/tree construction, algorithm selection.</span></li>
+<li><a href="https://github.com/llm-d/llm-d" target="_blank" rel="noopener">llm-d</a> · <a href="https://github.com/llm-d/llm-d-inference-scheduler" target="_blank" rel="noopener">inference scheduler</a><span>Disaggregated serving on Kubernetes.</span></li>
+<li><a href="https://github.com/volcano-sh/volcano/tree/master/pkg/scheduler/plugins/gang" target="_blank" rel="noopener">Volcano gang scheduling plugin</a><span>How gang scheduling is implemented.</span></li>
+<li><a href="https://github.com/ai-dynamo/nixl" target="_blank" rel="noopener">NIXL</a> · <a href="https://github.com/LMCache/LMCache" target="_blank" rel="noopener">LMCache</a> · <a href="https://github.com/skypilot-org/skypilot" target="_blank" rel="noopener">SkyPilot</a><span>Tools from her posts.</span></li>
+<li><a href="https://github.com/goabiaryan/smol_vllm" target="_blank" rel="noopener">smol-vllm</a> · <a href="https://github.com/goabiaryan/RelayServe" target="_blank" rel="noopener">RelayServe</a> · <a href="https://github.com/goabiaryan/llm-cluster-simulator" target="_blank" rel="noopener">llm-cluster-simulator</a> · <a href="https://github.com/goabiaryan/awesome-gpu-engineering" target="_blank" rel="noopener">awesome-gpu-engineering</a><span>Her own code: a readable paged-attention engine, a minimal gateway, a cluster simulator, a curated list. Her "fullstack-inferencing" lab (vLLM on Lambda + Prometheus/Grafana, close to Project 1) is listed on her site but the repo isn't public right now.</span></li>
+</ul></div>
+
+<h2 id="links"><span class="num">6</span>Her resources</h2>
+<div class="card"><ul class="links">
+<li><a href="https://abiaryan.com/" target="_blank" rel="noopener">abiaryan.com</a> · <a href="https://abiaryan.com/writing/one-roadmap/" target="_blank" rel="noopener">One Inference Roadmap</a> · <a href="https://abiaryan.com/writing/eighty-busy-still-slow/" target="_blank" rel="noopener">GPU utilization is misleading</a> · <a href="https://abiaryan.com/writing/same-gpu-different-century/" target="_blank" rel="noopener">3.3 s vs 39 s</a> · <a href="https://abiaryan.com/writing/sunday-slack-27k/" target="_blank" rel="noopener">$27k weekend</a> · <a href="https://abiaryan.com/writing/kv-needs-a-phone-book/" target="_blank" rel="noopener">KV needs a directory</a><span>Read these 5 first.</span></li>
+<li><a href="https://modelcraft.substack.com/" target="_blank" rel="noopener">ModelCraft Substack</a> · <a href="https://modelcraft.substack.com/p/the-real-reason-llms-feel-slow" target="_blank" rel="noopener">Why LLMs feel slow</a> · <a href="https://modelcraft.substack.com/p/fundamentals-of-gpu-engineering" target="_blank" rel="noopener">Tensors to Teraflops</a> · <a href="https://modelcraft.substack.com/p/most-ai-companies-waste-half-their" target="_blank" rel="noopener">The hidden GPU crisis</a> · <a href="https://modelcraft.substack.com/p/can-you-tell-which-inference-servers" target="_blank" rel="noopener">Power caps</a><span>Her newsletter, the one Abhik recommended.</span></li>
+<li><a href="https://openjoule.org/" target="_blank" rel="noopener">OpenJoule data center planner</a><span>Build a GPU data center from chip to substation and stress-test power, cooling and fabric. Good for the NVIDIA cluster-design question.</span></li>
+<li><a href="https://gpuengineering.com/" target="_blank" rel="noopener">gpuengineering.com</a><span>Her public curriculum: CUDA, kernels, serving engines, multi-GPU.</span></li>
+<li><a href="https://maven.com/goabiaryan/inferencing" target="_blank" rel="noopener">AI Inference Engineering &amp; Systems Design (Maven)</a><span>$2,499; cohort Oct 24 – Dec 19, 2026 (enrollment closing as of Oct 19); 10 live sessions; $1,400 compute credits; 171-page interview guide with 150 questions; resume review. She lists "anyone on the job market for Inferencing / Solutions Architect roles" as a target audience. Optional: the projects above give you the core for free.</span></li>
+<li><a href="https://maven.com/goabiaryan/inferencing-intro" target="_blank" rel="noopener">Inferencing 101 (Maven)</a> · <a href="https://topmate.io/goabiaryan" target="_blank" rel="noopener">Topmate 1:1</a> · <a href="https://www.youtube.com/@goabiaryan" target="_blank" rel="noopener">YouTube</a></li>
+<li><a href="https://keda.sh/docs/latest/scalers/prometheus/" target="_blank" rel="noopener">KEDA Prometheus scaler</a> · <a href="https://docs.vllm.ai/en/latest/usage/metrics.html" target="_blank" rel="noopener">vLLM metrics</a> · <a href="https://docs.vllm.ai/en/latest/configuration/engine_args.html" target="_blank" rel="noopener">vLLM engine args</a> · <a href="https://docs.vllm.ai/en/latest/configuration/optimization.html" target="_blank" rel="noopener">vLLM optimization</a> · <a href="https://docs.vllm.ai/en/latest/contributing/benchmarks.html" target="_blank" rel="noopener">vLLM benchmarks</a><span>Project docs.</span></li>
+<li><a href="https://github.com/vllm-project/production-stack" target="_blank" rel="noopener">vLLM production-stack</a> · <a href="https://docs.litellm.ai/" target="_blank" rel="noopener">LiteLLM</a> · <a href="https://github.com/envoyproxy/ai-gateway" target="_blank" rel="noopener">Envoy AI Gateway</a> · <a href="https://locust.io/" target="_blank" rel="noopener">Locust</a> · <a href="https://github.com/NVIDIA/dcgm-exporter" target="_blank" rel="noopener">dcgm-exporter</a> · <a href="https://openai.com/api/pricing/" target="_blank" rel="noopener">OpenAI API pricing</a><span>Tools for the two projects.</span></li>
+<li><a href="https://github.com/chetananand/learning-companion-serving" target="_blank" rel="noopener">Student final project (learning-companion-serving)</a><span>The reference build described above.</span></li>
+</ul></div>
+</Base>

@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import Progress from '../../components/Progress.astro';
+import PersonHeader from '../../components/PersonHeader.astro';
+const sections = [
+  { id: 'key', label: 'Key points' }, { id: 'do', label: 'Do this' },
+  { id: 'detail', label: 'In detail' }, { id: 'links', label: 'Links' },
+];
+---
+<Base title="Krati Agarwal" description="Krati's view from inside NVIDIA's AI infra team." brand="nvidia" current="people">
+<Progress plan="person-krati" sections={sections} />
+<PersonHeader slug="krati" />
+
+<h2 id="key"><span class="num">1</span>Key points</h2>
+<div class="card">
+<div class="q"><b>1. Your AWS experience is a plus.</b><span>Cloud providers differ, but the principles don't. NVIDIA works with cloud providers all day.</span></div>
+<div class="q"><b>2. Skills that matter: Kubernetes, OS and kernel, networking, GPU architectures.</b><span>Shell is good to have; Python or C++ enough to judge whether AI-written code is correct. <b>No CUDA needed</b> for an SA: other teams do that.</span></div>
+<div class="q"><b>3. The daily job: keep expensive GPUs busy.</b><span>"If you waste 1 minute of GPU, that's a high cost." Find the slow node that turned a 30-minute job into 1 hour.</span></div>
+<div class="q"><b>4. Explore the ecosystem for a week before picking roles.</b><span>NVIDIA has roles AWS doesn't. Spend 3–4 days to a week learning the GPU world, then pick what fits your interest and experience.</span></div>
+<div class="q"><b>5. Look at confidential computing / GPU attestation.</b><span>Teams she knows are hiring for it.</span></div>
+</div>
+
+<h2 id="do"><span class="num">2</span>Do this</h2>
+<div class="week"><h3>Krati's actions <span>tick as you go</span></h3>
+<div class="task"><input type="checkbox" id="kr1"><label for="kr1">Spend 3–4 days mapping the GPU ecosystem: chips, NVIDIA Cloud Partners, what CSPs and neoclouds sell (bare metal, VMs, NVLink systems, managed Kubernetes).<span class="done-when">Done when you have a 1-page map and 2–3 role types that interest you.</span></label></div>
+<div class="task"><input type="checkbox" id="kr2"><label for="kr2">Learn the chip line-up: Grace Hopper (GH200) → Blackwell (B200, GB200 NVL72) → Blackwell Ultra (B300, GB300) → Vera Rubin. Write memory, NVLink and rack-scale differences.<span class="done-when">Done when you can explain a GB200 NVL72 rack in 2 minutes.</span></label></div>
+<div class="task"><input type="checkbox" id="kr3"><label for="kr3">Refresh OS fundamentals: kernel vs user space, drivers, bare metal vs VM vs hypervisor vs managed Kubernetes, PCIe passthrough.<span class="done-when">Done when you can answer "what happens between a pod requesting a GPU and the kernel driver?"</span></label></div>
+<div class="task"><input type="checkbox" id="kr4"><label for="kr4">Reproduce her troubleshooting case in your lab: run nccl-tests on node pairs and compare per-node speed to find a "culprit" node.<span class="done-when">Done when you can walk through the 30-min → 1-hour investigation step by step (NVIDIA plan, Lab 3).</span></label></div>
+<div class="task"><input type="checkbox" id="kr5"><label for="kr5">Read one NVIDIA confidential computing overview; note what GPU attestation proves and who needs it.<span class="done-when">Done when you have 5 lines of notes.</span></label></div>
+<div class="task"><input type="checkbox" id="kr6"><label for="kr6">Book the follow-up Topmate session with her (you promised one in 2–3 weeks) and show your roadmap HTML.<span class="done-when">Done when the session is booked.</span></label></div>
+</div>
+
+<h2 id="detail"><span class="num">3</span>In detail</h2>
+<div class="card">
+<b>Her team and work</b>
+<div class="q"><b>Role</b><span>Joined NVIDIA as an SRE; the team evolved into "AI infra engineers". They run clusters where NVIDIA's customers are onboarded: reliability, availability, occupancy, metric issues.</span></div>
+<div class="q"><b>Automation-first</b><span>They build automation for remediation, tracking and observability; "a lot of dev work to make the SRE team successful."</span></div>
+<div class="q"><b>Lifecycle coordination</b><span>She also coordinates a full lifecycle project across networking, security and other teams: "the upper leaf of all those leaf nodes."</span></div>
+<div class="q"><b>Who they work with</b><span>CSPs (AWS, Oracle…) and many new <b>NVIDIA Cloud Partners (NCPs)</b>, smaller GPU clouds NVIDIA helps grow. Her team works on partners' data centers, not NVIDIA's own.</span></div>
+</div>
+<div class="card">
+<b>Where the money goes</b>
+<div class="q"><b>Hardware needs software</b><span>Before any user is onboarded, a whole software stack is deployed on the GPUs.</span></div>
+<div class="q"><b>Users</b><span>People who need serious GPU time beyond Colab or Jupyter: researchers (internal and external), model training teams. OpenAI, Perplexity, Gemini, Copilot all need this compute. NVIDIA and CSPs invest in each other.</span></div>
+</div>
+<div class="card">
+<b>Skills she listed</b>
+<div class="q"><b>Kubernetes</b><span>Industry focus: Kubernetes services that CSPs and NCPs offer on GPUs.</span></div>
+<div class="q"><b>Coding</b><span>Shell good to have. Python or C++. People use AI to write code, but you must validate it yourself.</span></div>
+<div class="q"><b>GPU architectures</b><span>GB300, GB200, Blackwell, Grace Hopper, Vera Rubin. Expected at your experience level.</span></div>
+<div class="q"><b>OS and networking</b><span>"What all the roles mostly need": how the OS and kernel work, bare metal vs VMs vs hypervisors vs managed Kubernetes, NVLink systems.</span></div>
+<div class="q"><b>Not needed</b><span>CUDA programming, for SA-type roles.</span></div>
+</div>
+<div class="card">
+<b>Performance: the real-world problem</b>
+<div class="q"><b>Example</b><span>A researcher uses 10 nodes. From past runs the job takes 30 min; today 1 hour. That's 30 minutes of extra GPU cost. Which of the 10 nodes is the culprit? Check GPU-to-GPU communication, network latency, input/output, training time.</span></div>
+<div class="q"><b>How they find it</b><span>Collect data, compare against history, and run rigorous screening (burn-in) and performance tests. A whole ops team does testing; benchmarks show whether a cluster gives users what they expect.</span></div>
+</div>
+
+<h2 id="links"><span class="num">4</span>Links</h2>
+<div class="card"><ul class="links">
+<li><a href="https://www.nvidia.com/en-us/about-nvidia/partners/" target="_blank" rel="noopener">NVIDIA Partner Network</a><span>Find the NVIDIA Cloud Partners she described.</span></li>
+<li><a href="https://www.nvidia.com/en-us/data-center/solutions/confidential-computing/" target="_blank" rel="noopener">NVIDIA Confidential Computing</a><span>The GPU attestation area she suggested exploring.</span></li>
+<li><a href="https://github.com/NVIDIA/nccl-tests" target="_blank" rel="noopener">nccl-tests</a><span>The tool for finding the slow node between pairs.</span></li>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html" target="_blank" rel="noopener">NVIDIA GPU Operator docs</a><span>How Kubernetes on GPUs is set up.</span></li>
+<li><a href="https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite" target="_blank" rel="noopener">NVIDIA careers</a><span>She offered to share job IDs in your shared doc; check it for her notes.</span></li>
+</ul></div>
+</Base>

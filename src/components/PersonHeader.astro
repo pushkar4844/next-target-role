@@ -1,0 +1,14 @@
+---
+import { people } from '../data/people';
+
+interface Props {
+  slug: string;
+}
+const p = people.find((x) => x.slug === Astro.props.slug)!;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const plan = p.track === 'google' ? { href: `${base}/google/`, label: 'Google plan' } : { href: `${base}/nvidia/`, label: 'NVIDIA plan' };
+---
+<p class="eyebrow" style="margin-top:24px"><a class="crumb" href={`${base}/people/`}>People</a> · {p.track === 'google' ? 'Google track' : 'AI infra / NVIDIA track'}</p>
+<h1>{p.name}</h1>
+<p class="sub">{p.role}</p>
+<p class="meta">Source: {p.source} · Feeds the <a href={plan.href}>{plan.label}</a></p>
